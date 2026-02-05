@@ -1,0 +1,319 @@
+<mvc:View
+    controllerName="analytics.controller.Dashboard"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:vizData="sap.viz.ui5.data"
+    xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:table="sap.ui.table">
+
+    <Page
+        title="{i18n>appTitle}"
+        class="dashboardPage sapUiContentPadding"
+        showNavButton="false">
+
+        <content>
+            <!-- KPI Tiles -->
+            <l:Grid
+                defaultSpan="XL3 L3 M6 S12"
+                class="sapUiSmallMarginTop">
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>kpiTotalRevenue}"
+                            subtitle="Jahresumsatz 2025"
+                            number="{path: '/kpis/totalRevenue', formatter: '.formatCurrency'}"
+                            numberUnit="EUR">
+                            <card:numericIndicators>
+                                <card:NumericIndicator
+                                    number="{/kpis/revenueChange}"
+                                    numberUnit="%"
+                                    state="Good"
+                                    trend="Up" />
+                            </card:numericIndicators>
+                        </card:Header>
+                    </f:header>
+                </f:Card>
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>kpiTotalOrders}"
+                            subtitle="Gesamtanzahl 2025"
+                            number="{path: '/kpis/totalOrders', formatter: '.formatNumber'}"
+                            numberUnit="Stk.">
+                            <card:numericIndicators>
+                                <card:NumericIndicator
+                                    number="{/kpis/ordersChange}"
+                                    numberUnit="%"
+                                    state="Good"
+                                    trend="Up" />
+                            </card:numericIndicators>
+                        </card:Header>
+                    </f:header>
+                </f:Card>
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>kpiAvgOrderValue}"
+                            subtitle="Durchschnitt pro Bestellung"
+                            number="{path: '/kpis/avgOrderValue', formatter: '.formatCurrency'}"
+                            numberUnit="EUR">
+                            <card:numericIndicators>
+                                <card:NumericIndicator
+                                    number="{/kpis/avgOrderChange}"
+                                    numberUnit="%"
+                                    state="Good"
+                                    trend="Up" />
+                            </card:numericIndicators>
+                        </card:Header>
+                    </f:header>
+                </f:Card>
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>kpiSatisfaction}"
+                            subtitle="Bewertung (von 5.0)"
+                            number="{/kpis/customerSatisfaction}"
+                            numberUnit="/ 5.0">
+                            <card:numericIndicators>
+                                <card:NumericIndicator
+                                    number="{/kpis/satisfactionChange}"
+                                    numberUnit="Pkt."
+                                    state="Good"
+                                    trend="Up" />
+                            </card:numericIndicators>
+                        </card:Header>
+                    </f:header>
+                </f:Card>
+            </l:Grid>
+
+            <!-- Charts Row -->
+            <l:Grid
+                defaultSpan="XL8 L8 M12 S12"
+                class="sapUiSmallMarginTop">
+
+                <!-- Monthly Trend Chart -->
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header title="{i18n>chartMonthlyTrend}" />
+                    </f:header>
+                    <f:content>
+                        <viz:VizFrame
+                            id="chartMonthlyTrend"
+                            vizType="dual_line"
+                            width="100%"
+                            height="350px"
+                            uiConfig="{ applicationSet: 'fiori' }">
+                            <viz:dataset>
+                                <vizData:FlattenedDataset
+                                    data="{/monthlyTrend}">
+                                    <vizData:dimensions>
+                                        <vizData:DimensionDefinition
+                                            name="Monat"
+                                            value="{month}" />
+                                    </vizData:dimensions>
+                                    <vizData:measures>
+                                        <vizData:MeasureDefinition
+                                            name="Umsatz"
+                                            value="{revenue}" />
+                                        <vizData:MeasureDefinition
+                                            name="Gewinn"
+                                            value="{profit}" />
+                                    </vizData:measures>
+                                </vizData:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <vizFeeds:FeedItem
+                                    uid="valueAxis"
+                                    type="Measure"
+                                    values="Umsatz" />
+                                <vizFeeds:FeedItem
+                                    uid="valueAxis2"
+                                    type="Measure"
+                                    values="Gewinn" />
+                                <vizFeeds:FeedItem
+                                    uid="categoryAxis"
+                                    type="Dimension"
+                                    values="Monat" />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </f:content>
+                </f:Card>
+            </l:Grid>
+
+            <l:Grid
+                defaultSpan="XL6 L6 M12 S12"
+                class="sapUiSmallMarginTop">
+
+                <!-- Revenue by Region Chart -->
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header title="{i18n>chartRevenueByRegion}" />
+                    </f:header>
+                    <f:content>
+                        <viz:VizFrame
+                            id="chartRevenueByRegion"
+                            vizType="bar"
+                            width="100%"
+                            height="300px"
+                            uiConfig="{ applicationSet: 'fiori' }">
+                            <viz:dataset>
+                                <vizData:FlattenedDataset
+                                    data="{/revenueByRegion}">
+                                    <vizData:dimensions>
+                                        <vizData:DimensionDefinition
+                                            name="Region"
+                                            value="{region}" />
+                                    </vizData:dimensions>
+                                    <vizData:measures>
+                                        <vizData:MeasureDefinition
+                                            name="Umsatz"
+                                            value="{revenue}" />
+                                    </vizData:measures>
+                                </vizData:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <vizFeeds:FeedItem
+                                    uid="valueAxis"
+                                    type="Measure"
+                                    values="Umsatz" />
+                                <vizFeeds:FeedItem
+                                    uid="categoryAxis"
+                                    type="Dimension"
+                                    values="Region" />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </f:content>
+                </f:Card>
+
+                <!-- Product Category Donut Chart -->
+                <f:Card class="chartCard">
+                    <f:header>
+                        <card:Header title="{i18n>chartProductCategories}" />
+                    </f:header>
+                    <f:content>
+                        <viz:VizFrame
+                            id="chartProductCategories"
+                            vizType="donut"
+                            width="100%"
+                            height="300px"
+                            uiConfig="{ applicationSet: 'fiori' }">
+                            <viz:dataset>
+                                <vizData:FlattenedDataset
+                                    data="{/productCategories}">
+                                    <vizData:dimensions>
+                                        <vizData:DimensionDefinition
+                                            name="Kategorie"
+                                            value="{category}" />
+                                    </vizData:dimensions>
+                                    <vizData:measures>
+                                        <vizData:MeasureDefinition
+                                            name="Umsatz"
+                                            value="{revenue}" />
+                                    </vizData:measures>
+                                </vizData:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <vizFeeds:FeedItem
+                                    uid="size"
+                                    type="Measure"
+                                    values="Umsatz" />
+                                <vizFeeds:FeedItem
+                                    uid="color"
+                                    type="Dimension"
+                                    values="Kategorie" />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </f:content>
+                </f:Card>
+            </l:Grid>
+
+            <!-- Sales Details Table -->
+            <f:Card class="sapUiSmallMarginTop chartCard">
+                <f:header>
+                    <card:Header
+                        title="{i18n>tableTitle}"
+                        subtitle="12 Einträge" />
+                </f:header>
+                <f:content>
+                    <Table
+                        id="salesTable"
+                        items="{/salesDetails}"
+                        growing="true"
+                        growingThreshold="10"
+                        alternateRowColors="true"
+                        sticky="ColumnHeaders">
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <ToolbarSpacer />
+                                <SearchField
+                                    width="300px"
+                                    placeholder="Suche..."
+                                    search=".onSearch" />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column width="8rem">
+                                <Text text="{i18n>colOrderId}" />
+                            </Column>
+                            <Column width="7rem">
+                                <Text text="{i18n>colDate}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet">
+                                <Text text="{i18n>colCustomer}" />
+                            </Column>
+                            <Column minScreenWidth="Tablet" width="8rem">
+                                <Text text="{i18n>colRegion}" />
+                            </Column>
+                            <Column minScreenWidth="Desktop" width="8rem">
+                                <Text text="{i18n>colCategory}" />
+                            </Column>
+                            <Column minScreenWidth="Desktop">
+                                <Text text="{i18n>colProduct}" />
+                            </Column>
+                            <Column width="5rem" hAlign="End" minScreenWidth="Desktop">
+                                <Text text="{i18n>colQuantity}" />
+                            </Column>
+                            <Column width="7rem" hAlign="End" minScreenWidth="Tablet">
+                                <Text text="{i18n>colUnitPrice}" />
+                            </Column>
+                            <Column width="8rem" hAlign="End">
+                                <Text text="{i18n>colTotal}" />
+                            </Column>
+                            <Column width="8rem" hAlign="Center">
+                                <Text text="{i18n>colStatus}" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{orderId}" />
+                                    <Text text="{path: 'date', formatter: '.formatDate'}" />
+                                    <Text text="{customer}" />
+                                    <Text text="{region}" />
+                                    <Text text="{category}" />
+                                    <Text text="{product}" />
+                                    <ObjectNumber number="{quantity}" />
+                                    <ObjectNumber
+                                        number="{path: 'unitPrice', formatter: '.formatCurrency'}"
+                                        unit="EUR" />
+                                    <ObjectNumber
+                                        number="{path: 'totalAmount', formatter: '.formatCurrency'}"
+                                        unit="EUR"
+                                        emphasized="true" />
+                                    <ObjectStatus
+                                        text="{status}"
+                                        state="{path: 'status', formatter: '.formatStatusState'}" />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </f:content>
+            </f:Card>
+        </content>
+    </Page>
+</mvc:View>

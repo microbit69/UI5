@@ -1,0 +1,55 @@
+{
+    "kpis": {
+        "totalRevenue": 4875000,
+        "totalOrders": 12450,
+        "avgOrderValue": 391.57,
+        "customerSatisfaction": 4.3,
+        "revenueChange": 12.5,
+        "ordersChange": 8.3,
+        "avgOrderChange": 3.9,
+        "satisfactionChange": 0.2
+    },
+    "revenueByRegion": [
+        { "region": "Europa", "revenue": 1650000, "orders": 4200 },
+        { "region": "Nordamerika", "revenue": 1380000, "orders": 3500 },
+        { "region": "Asien-Pazifik", "revenue": 980000, "orders": 2800 },
+        { "region": "Lateinamerika", "revenue": 520000, "orders": 1200 },
+        { "region": "Naher Osten", "revenue": 345000, "orders": 750 }
+    ],
+    "monthlyTrend": [
+        { "month": "Jan", "revenue": 320000, "profit": 96000, "orders": 850 },
+        { "month": "Feb", "revenue": 350000, "profit": 108500, "orders": 920 },
+        { "month": "Mär", "revenue": 380000, "profit": 117800, "orders": 980 },
+        { "month": "Apr", "revenue": 410000, "profit": 131200, "orders": 1050 },
+        { "month": "Mai", "revenue": 395000, "profit": 122450, "orders": 1010 },
+        { "month": "Jun", "revenue": 430000, "profit": 137600, "orders": 1100 },
+        { "month": "Jul", "revenue": 445000, "profit": 146850, "orders": 1120 },
+        { "month": "Aug", "revenue": 420000, "profit": 134400, "orders": 1080 },
+        { "month": "Sep", "revenue": 460000, "profit": 151800, "orders": 1180 },
+        { "month": "Okt", "revenue": 480000, "profit": 158400, "orders": 1200 },
+        { "month": "Nov", "revenue": 510000, "profit": 173400, "orders": 1350 },
+        { "month": "Dez", "revenue": 475000, "profit": 156750, "orders": 1610 }
+    ],
+    "productCategories": [
+        { "category": "Elektronik", "revenue": 1560000, "share": 32 },
+        { "category": "Bekleidung", "revenue": 975000, "share": 20 },
+        { "category": "Möbel", "revenue": 731250, "share": 15 },
+        { "category": "Lebensmittel", "revenue": 682500, "share": 14 },
+        { "category": "Sport & Freizeit", "revenue": 487500, "share": 10 },
+        { "category": "Sonstiges", "revenue": 438750, "share": 9 }
+    ],
+    "salesDetails": [
+        { "orderId": "ORD-2025-001", "date": "2025-01-15", "customer": "TechCorp GmbH", "region": "Europa", "category": "Elektronik", "product": "Server-Rack X500", "quantity": 5, "unitPrice": 12000, "totalAmount": 60000, "status": "Geliefert" },
+        { "orderId": "ORD-2025-002", "date": "2025-01-18", "customer": "Fashion House Inc.", "region": "Nordamerika", "category": "Bekleidung", "product": "Designer Kollektion", "quantity": 200, "unitPrice": 85, "totalAmount": 17000, "status": "Geliefert" },
+        { "orderId": "ORD-2025-003", "date": "2025-02-02", "customer": "Office Solutions AG", "region": "Europa", "category": "Möbel", "product": "Ergonomie-Paket Pro", "quantity": 50, "unitPrice": 450, "totalAmount": 22500, "status": "Geliefert" },
+        { "orderId": "ORD-2025-004", "date": "2025-02-14", "customer": "SportMax Ltd.", "region": "Asien-Pazifik", "category": "Sport & Freizeit", "product": "Fitness-Set Premium", "quantity": 120, "unitPrice": 199, "totalAmount": 23880, "status": "In Bearbeitung" },
+        { "orderId": "ORD-2025-005", "date": "2025-03-01", "customer": "Green Foods S.A.", "region": "Lateinamerika", "category": "Lebensmittel", "product": "Bio-Sortiment Palette", "quantity": 30, "unitPrice": 580, "totalAmount": 17400, "status": "Geliefert" },
+        { "orderId": "ORD-2025-006", "date": "2025-03-10", "customer": "DataSystems Corp.", "region": "Nordamerika", "category": "Elektronik", "product": "Cloud-Server Package", "quantity": 3, "unitPrice": 25000, "totalAmount": 75000, "status": "Geliefert" },
+        { "orderId": "ORD-2025-007", "date": "2025-03-22", "customer": "Al Rashid Trading", "region": "Naher Osten", "category": "Elektronik", "product": "Netzwerk-Bundle", "quantity": 10, "unitPrice": 3200, "totalAmount": 32000, "status": "Versandt" },
+        { "orderId": "ORD-2025-008", "date": "2025-04-05", "customer": "Home & Living KG", "region": "Europa", "category": "Möbel", "product": "Wohnzimmer-Set Classic", "quantity": 15, "unitPrice": 1800, "totalAmount": 27000, "status": "Geliefert" },
+        { "orderId": "ORD-2025-009", "date": "2025-04-18", "customer": "Tokyo Electronics", "region": "Asien-Pazifik", "category": "Elektronik", "product": "Display-Wand 4K", "quantity": 8, "unitPrice": 5500, "totalAmount": 44000, "status": "In Bearbeitung" },
+        { "orderId": "ORD-2025-010", "date": "2025-05-02", "customer": "Mode Zentrale AG", "region": "Europa", "category": "Bekleidung", "product": "Sommer-Kollektion 2025", "quantity": 500, "unitPrice": 42, "totalAmount": 21000, "status": "Versandt" },
+        { "orderId": "ORD-2025-011", "date": "2025-05-15", "customer": "FitLife Inc.", "region": "Nordamerika", "category": "Sport & Freizeit", "product": "Yoga-Studio Ausstattung", "quantity": 25, "unitPrice": 890, "totalAmount": 22250, "status": "Geliefert" },
+        { "orderId": "ORD-2025-012", "date": "2025-06-01", "customer": "Gourmet Express", "region": "Europa", "category": "Lebensmittel", "product": "Premium Feinkost Box", "quantity": 100, "unitPrice": 125, "totalAmount": 12500, "status": "Geliefert" }
+    ]
+}

@@ -1,0 +1,11 @@
+<mvc:View
+    controllerName="analytics.controller.App"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    displayBlock="true">
+    <Shell>
+        <App id="appControl">
+            <pages></pages>
+        </App>
+    </Shell>
+</mvc:View>

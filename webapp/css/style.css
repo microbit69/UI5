@@ -1,0 +1,49 @@
+.dashboardPage {
+    background-color: #f5f6f7;
+}
+
+.sapMGT {
+    margin: 0.5rem;
+}
+
+.kpiTileContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.kpiValue {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #0a6ed1;
+}
+
+.kpiChange {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.kpiChangePositive {
+    color: #107e3e;
+}
+
+.kpiChangeNegative {
+    color: #bb0000;
+}
+
+.chartCard {
+    margin: 0.5rem;
+}
+
+.statusGeliefert {
+    color: #107e3e;
+}
+
+.statusVersandt {
+    color: #e9730c;
+}
+
+.statusInBearbeitung {
+    color: #0a6ed1;
+}
