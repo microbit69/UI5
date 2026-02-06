@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiori Product Catalog</title>
+    <style>
+        .statusGeliefert { color: #107e3e; }
+        .detailAttrGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    </style>
+    <script
+        id="sap-ui-bootstrap"
+        src="https://sdk.openui5.org/resources/sap-ui-core.js"
+        data-sap-ui-theme="sap_horizon"
+        data-sap-ui-libs="sap.m, sap.f, sap.ui.layout, sap.ui.core, sap.ui.unified"
+        data-sap-ui-compatVersion="edge"
+        data-sap-ui-async="true"
+        data-sap-ui-oninit="onUI5Ready">
+    </script>
+    <script>
+        // ── Embedded Mock Data ──
+        var PRODUCTS = [
+            { id: "PRD-001", name: "Server-Rack X500", category: "Hardware", supplier: "TechCorp GmbH", price: 12000, stock: 45, rating: 4.5, status: "Verfügbar", description: "Enterprise Server-Rack mit 42 Höheneinheiten, redundanter Stromversorgung und integriertem Kabelmanagement.", image: "sap-icon://it-host", orders: 128, revenue: 1536000, lastOrder: "12.01.2025" },
+            { id: "PRD-002", name: "Cloud-Server Package", category: "Services", supplier: "DataSystems Corp.", price: 25000, stock: 0, rating: 4.8, status: "Auf Anfrage", description: "Managed Cloud-Hosting Paket mit 99,99% SLA, automatischem Scaling und 24/7 Support.", image: "sap-icon://cloud", orders: 56, revenue: 1400000, lastOrder: "08.01.2025" },
+            { id: "PRD-003", name: "Ergonomie-Paket Pro", category: "Möbel", supplier: "Office Solutions AG", price: 450, stock: 320, rating: 4.2, status: "Verfügbar", description: "Komplettes Arbeitsplatz-Set mit höhenverstellbarem Tisch, ergonomischem Stuhl und Monitorarm.", image: "sap-icon://desk-adjustable-height", orders: 890, revenue: 400500, lastOrder: "15.01.2025" },
+            { id: "PRD-004", name: "Netzwerk-Bundle Enterprise", category: "Hardware", supplier: "Al Rashid Trading", price: 3200, stock: 78, rating: 4.0, status: "Verfügbar", description: "Komplettpaket mit Managed Switch, Access Points und Firewall für bis zu 500 Nutzer.", image: "sap-icon://connected", orders: 234, revenue: 748800, lastOrder: "22.12.2024" },
+            { id: "PRD-005", name: "Display-Wand 4K", category: "Hardware", supplier: "Tokyo Electronics", price: 5500, stock: 12, rating: 4.7, status: "Wenige verfügbar", description: "4x4 Video-Wall mit 4K Auflösung pro Panel, lückenloser Darstellung und Fernwartung.", image: "sap-icon://screen-split-three", orders: 67, revenue: 368500, lastOrder: "03.01.2025" },
+            { id: "PRD-006", name: "Sommer-Kollektion 2025", category: "Bekleidung", supplier: "Mode Zentrale AG", price: 42, stock: 5000, rating: 3.9, status: "Verfügbar", description: "Aktuelle Sommer-Kollektion mit 25 verschiedenen Artikeln in allen gängigen Größen.", image: "sap-icon://shirt", orders: 3400, revenue: 142800, lastOrder: "18.01.2025" },
+            { id: "PRD-007", name: "Fitness-Set Premium", category: "Sport & Freizeit", supplier: "SportMax Ltd.", price: 199, stock: 156, rating: 4.4, status: "Verfügbar", description: "Professionelles Fitness-Set mit Hanteln, Widerstandsbändern, Yogamatte und Trainingsplan.", image: "sap-icon://physical-activity", orders: 1200, revenue: 238800, lastOrder: "10.01.2025" },
+            { id: "PRD-008", name: "Bio-Sortiment Palette", category: "Lebensmittel", supplier: "Green Foods S.A.", price: 580, stock: 200, rating: 4.6, status: "Verfügbar", description: "Gemischte Palette mit 40 verschiedenen Bio-Produkten aus nachhaltigem Anbau.", image: "sap-icon://nutrition-activity", orders: 456, revenue: 264480, lastOrder: "20.01.2025" },
+            { id: "PRD-009", name: "Wohnzimmer-Set Classic", category: "Möbel", supplier: "Home & Living KG", price: 1800, stock: 28, rating: 4.1, status: "Verfügbar", description: "Elegantes Wohnzimmer-Set bestehend aus Sofa, Couchtisch und TV-Lowboard in Eiche-Optik.", image: "sap-icon://home", orders: 189, revenue: 340200, lastOrder: "05.01.2025" },
+            { id: "PRD-010", name: "Yoga-Studio Ausstattung", category: "Sport & Freizeit", supplier: "FitLife Inc.", price: 890, stock: 34, rating: 4.3, status: "Verfügbar", description: "Komplette Studio-Ausstattung für bis zu 20 Teilnehmer inkl. Matten, Blöcke und Gurte.", image: "sap-icon://person-placeholder", orders: 98, revenue: 87220, lastOrder: "28.12.2024" },
+            { id: "PRD-011", name: "Premium Feinkost Box", category: "Lebensmittel", supplier: "Gourmet Express", price: 125, stock: 400, rating: 4.9, status: "Verfügbar", description: "Exklusive Feinkost-Auswahl mit Trüffelöl, Parmigiano, iberischem Schinken und Wein.", image: "sap-icon://meal", orders: 2100, revenue: 262500, lastOrder: "19.01.2025" },
+            { id: "PRD-012", name: "Designer Kollektion", category: "Bekleidung", supplier: "Fashion House Inc.", price: 85, stock: 1800, rating: 3.7, status: "Verfügbar", description: "Limitierte Designer-Kollektion mit 15 ausgewählten Stücken für Damen und Herren.", image: "sap-icon://competitor", orders: 4500, revenue: 382500, lastOrder: "17.01.2025" }
+        ];
+
+        var CATEGORIES = ["Alle", "Hardware", "Services", "Möbel", "Bekleidung", "Sport & Freizeit", "Lebensmittel"];
+
+        function fmt(n) { return n.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        function fmtInt(n) { return n.toLocaleString("de-DE"); }
+
+        function onUI5Ready() {
+            sap.ui.require([
+                "sap/m/Shell", "sap/m/App", "sap/m/Page",
+                "sap/f/DynamicPage", "sap/f/DynamicPageTitle", "sap/f/DynamicPageHeader",
+                "sap/m/Table", "sap/m/Column", "sap/m/ColumnListItem",
+                "sap/m/Text", "sap/m/Title", "sap/m/Label",
+                "sap/m/ObjectNumber", "sap/m/ObjectStatus", "sap/m/ObjectHeader",
+                "sap/m/ObjectAttribute", "sap/m/ObjectMarker",
+                "sap/m/SearchField", "sap/m/Select", "sap/ui/core/Item",
+                "sap/m/OverflowToolbar", "sap/m/ToolbarSpacer", "sap/m/ToolbarSeparator",
+                "sap/m/Button", "sap/m/Dialog", "sap/m/Bar",
+                "sap/m/IconTabBar", "sap/m/IconTabFilter",
+                "sap/m/RatingIndicator", "sap/m/ProgressIndicator",
+                "sap/m/HBox", "sap/m/VBox", "sap/m/FlexBox",
+                "sap/m/GenericTile", "sap/m/TileContent", "sap/m/NumericContent",
+                "sap/ui/layout/Grid", "sap/ui/layout/form/SimpleForm",
+                "sap/ui/core/HTML", "sap/ui/core/Icon",
+                "sap/ui/model/json/JSONModel",
+                "sap/ui/model/Filter", "sap/ui/model/FilterOperator",
+                "sap/m/MessageToast"
+            ], function (Shell, App, Page,
+                         DynamicPage, DynamicPageTitle, DynamicPageHeader,
+                         Table, Column, ColumnListItem,
+                         Text, Title, Label,
+                         ObjectNumber, ObjectStatus, ObjectHeader,
+                         ObjectAttribute, ObjectMarker,
+                         SearchField, Select, Item,
+                         OverflowToolbar, ToolbarSpacer, ToolbarSeparator,
+                         Button, Dialog, Bar,
+                         IconTabBar, IconTabFilter,
+                         RatingIndicator, ProgressIndicator,
+                         HBox, VBox, FlexBox,
+                         GenericTile, TileContent, NumericContent,
+                         Grid, SimpleForm,
+                         HTML, Icon,
+                         JSONModel, Filter, FilterOperator,
+                         MessageToast) {
+
+                var oModel = new JSONModel({ products: PRODUCTS, count: PRODUCTS.length });
+
+                // ── Filters ──
+                var oSearch = new SearchField({ placeholder: "Produkt suchen...", width: "100%", search: doFilter });
+                var oCategorySelect = new Select({
+                    items: CATEGORIES.map(function (c) { return new Item({ key: c, text: c }); }),
+                    change: doFilter
+                });
+                var oStockSelect = new Select({
+                    items: [
+                        new Item({ key: "all", text: "Alle Bestände" }),
+                        new Item({ key: "available", text: "Auf Lager (> 0)" }),
+                        new Item({ key: "low", text: "Wenig Bestand (< 50)" }),
+                        new Item({ key: "out", text: "Nicht verfügbar" })
+                    ],
+                    change: doFilter
+                });
+
+                function doFilter() {
+                    var aFilters = [];
+                    var sQuery = oSearch.getValue();
+                    if (sQuery) {
+                        aFilters.push(new Filter({
+                            filters: [
+                                new Filter("name", FilterOperator.Contains, sQuery),
+                                new Filter("id", FilterOperator.Contains, sQuery),
+                                new Filter("supplier", FilterOperator.Contains, sQuery)
+                            ],
+                            and: false
+                        }));
+                    }
+                    var sCat = oCategorySelect.getSelectedKey();
+                    if (sCat && sCat !== "Alle") {
+                        aFilters.push(new Filter("category", FilterOperator.EQ, sCat));
+                    }
+                    var sStock = oStockSelect.getSelectedKey();
+                    if (sStock === "available") aFilters.push(new Filter("stock", FilterOperator.GT, 0));
+                    else if (sStock === "low") aFilters.push(new Filter("stock", FilterOperator.BT, 1, 49));
+                    else if (sStock === "out") aFilters.push(new Filter("stock", FilterOperator.EQ, 0));
+
+                    var oBinding = oTable.getBinding("items");
+                    oBinding.filter(aFilters);
+                    oModel.setProperty("/count", oBinding.getLength());
+                }
+
+                // ── Table ──
+                var oTable = new Table({
+                    growing: true,
+                    growingThreshold: 20,
+                    alternateRowColors: true,
+                    sticky: ["ColumnHeaders"],
+                    mode: "SingleSelectMaster",
+                    selectionChange: function (oEvent) {
+                        var oCtx = oEvent.getParameter("listItem").getBindingContext();
+                        showDetail(oCtx.getObject());
+                    },
+                    columns: [
+                        new Column({ width: "7rem", header: new Text({ text: "Artikel-Nr." }) }),
+                        new Column({ header: new Text({ text: "Produkt" }) }),
+                        new Column({ width: "9rem", minScreenWidth: "Tablet", header: new Text({ text: "Kategorie" }) }),
+                        new Column({ minScreenWidth: "Tablet", header: new Text({ text: "Lieferant" }) }),
+                        new Column({ width: "7rem", hAlign: "End", header: new Text({ text: "Preis" }) }),
+                        new Column({ width: "5rem", hAlign: "End", minScreenWidth: "Desktop", header: new Text({ text: "Bestand" }) }),
+                        new Column({ width: "7rem", hAlign: "Center", minScreenWidth: "Tablet", header: new Text({ text: "Bewertung" }) }),
+                        new Column({ width: "8rem", hAlign: "Center", header: new Text({ text: "Status" }) })
+                    ]
+                });
+
+                oTable.setModel(oModel);
+                oTable.bindItems("/products", new ColumnListItem({
+                    type: "Active",
+                    cells: [
+                        new Text({ text: "{id}" }),
+                        new HBox({ items: [
+                            new Icon({ src: "{image}", size: "1.5rem" }).addStyleClass("sapUiSmallMarginEnd"),
+                            new Text({ text: "{name}" })
+                        ], alignItems: "Center" }),
+                        new Text({ text: "{category}" }),
+                        new Text({ text: "{supplier}" }),
+                        new ObjectNumber({ number: { path: "price", formatter: fmt }, unit: "EUR" }),
+                        new ObjectNumber({
+                            number: "{stock}",
+                            state: { path: "stock", formatter: function (s) { return s === 0 ? "Error" : s < 50 ? "Warning" : "Success"; } }
+                        }),
+                        new RatingIndicator({ value: "{rating}", maxValue: 5, iconSize: "0.875rem", editable: false }),
+                        new ObjectStatus({
+                            text: "{status}",
+                            state: { path: "status", formatter: function (s) { return s === "Verfügbar" ? "Success" : s === "Wenige verfügbar" ? "Warning" : s === "Auf Anfrage" ? "Information" : "None"; } }
+                        })
+                    ]
+                }));
+
+                // ── Detail Dialog (Object Page Style) ──
+                function showDetail(p) {
+                    var oDialog = new Dialog({
+                        title: p.name,
+                        contentWidth: "700px",
+                        stretch: sap.ui.Device.system.phone,
+                        content: [
+                            new ObjectHeader({
+                                title: p.name,
+                                number: fmt(p.price),
+                                numberUnit: "EUR",
+                                icon: p.image,
+                                intro: p.id,
+                                statuses: [
+                                    new ObjectStatus({
+                                        text: p.status,
+                                        state: p.status === "Verfügbar" ? "Success" : p.status === "Wenige verfügbar" ? "Warning" : "Information"
+                                    }),
+                                    new ObjectStatus({
+                                        text: p.stock + " auf Lager",
+                                        state: p.stock === 0 ? "Error" : p.stock < 50 ? "Warning" : "Success"
+                                    })
+                                ],
+                                attributes: [
+                                    new ObjectAttribute({ title: "Kategorie", text: p.category }),
+                                    new ObjectAttribute({ title: "Lieferant", text: p.supplier }),
+                                    new ObjectAttribute({ title: "Letzte Bestellung", text: p.lastOrder })
+                                ]
+                            }).addStyleClass("sapUiSmallMarginBottom"),
+
+                            new IconTabBar({
+                                expandable: false,
+                                items: [
+                                    new IconTabFilter({
+                                        text: "Übersicht",
+                                        icon: "sap-icon://hint",
+                                        content: [
+                                            new VBox({
+                                                items: [
+                                                    new Text({ text: p.description }).addStyleClass("sapUiSmallMargin"),
+                                                    new Grid({
+                                                        defaultSpan: "XL6 L6 M6 S12",
+                                                        content: [
+                                                            new GenericTile({
+                                                                header: "Bestellungen",
+                                                                subheader: "Gesamt",
+                                                                tileContent: new TileContent({
+                                                                    content: new NumericContent({ value: fmtInt(p.orders), indicator: "Up", valueColor: "Good" })
+                                                                })
+                                                            }).addStyleClass("sapUiTinyMargin"),
+                                                            new GenericTile({
+                                                                header: "Umsatz",
+                                                                subheader: "Kumuliert",
+                                                                tileContent: new TileContent({
+                                                                    content: new NumericContent({ value: fmtInt(p.revenue), scale: "EUR", indicator: "Up", valueColor: "Good" })
+                                                                })
+                                                            }).addStyleClass("sapUiTinyMargin")
+                                                        ]
+                                                    })
+                                                ]
+                                            })
+                                        ]
+                                    }),
+                                    new IconTabFilter({
+                                        text: "Kennzahlen",
+                                        icon: "sap-icon://bar-chart",
+                                        content: [
+                                            new VBox({
+                                                items: [
+                                                    buildKpiRow("Kundenbewertung", p.rating, 5),
+                                                    buildKpiRow("Lagerbestand", Math.min(p.stock, 100), 100),
+                                                    buildKpiRow("Bestellhäufigkeit", Math.min(p.orders, 5000), 5000),
+                                                    buildKpiRow("Umsatz-Anteil", Math.round(p.revenue / 60000), 100)
+                                                ]
+                                            }).addStyleClass("sapUiSmallMargin")
+                                        ]
+                                    })
+                                ]
+                            })
+                        ],
+                        endButton: new Button({ text: "Schließen", press: function () { oDialog.close(); oDialog.destroy(); } })
+                    });
+                    oDialog.open();
+                }
+
+                function buildKpiRow(label, value, max) {
+                    var pct = Math.round((value / max) * 100);
+                    var state = pct > 60 ? "Success" : pct > 30 ? "Warning" : "Error";
+                    return new HBox({
+                        alignItems: "Center",
+                        items: [
+                            new Label({ text: label, width: "150px" }),
+                            new ProgressIndicator({ percentValue: pct, displayValue: value + " / " + max, state: state, width: "100%" })
+                        ]
+                    }).addStyleClass("sapUiSmallMarginBottom");
+                }
+
+                // ── Dynamic Page (Fiori List Report) ──
+                var oDynamicPage = new DynamicPage({
+                    headerExpanded: true,
+                    toggleHeaderOnTitleClick: true,
+                    title: new DynamicPageTitle({
+                        heading: new Title({ text: "Produktkatalog" }),
+                        snappedContent: [new Text({ text: { path: "/count", formatter: function (c) { return c + " Produkte"; } } })],
+                        expandedContent: [new Text({ text: { path: "/count", formatter: function (c) { return c + " Produkte gefunden"; } } })],
+                        actions: [
+                            new Button({ text: "Exportieren", icon: "sap-icon://excel-attachment", type: "Ghost", press: function () { MessageToast.show("Export gestartet..."); } }),
+                            new Button({ icon: "sap-icon://action-settings", type: "Ghost", press: function () { MessageToast.show("Einstellungen"); } })
+                        ]
+                    }),
+                    header: new DynamicPageHeader({
+                        content: [
+                            new FlexBox({
+                                alignItems: "End",
+                                wrap: "Wrap",
+                                items: [
+                                    new VBox({ items: [new Label({ text: "Suche" }), oSearch], width: "250px" }).addStyleClass("sapUiSmallMarginEnd"),
+                                    new VBox({ items: [new Label({ text: "Kategorie" }), oCategorySelect] }).addStyleClass("sapUiSmallMarginEnd"),
+                                    new VBox({ items: [new Label({ text: "Bestand" }), oStockSelect] }).addStyleClass("sapUiSmallMarginEnd"),
+                                    new Button({ text: "Filter zurücksetzen", press: function () {
+                                        oSearch.setValue("");
+                                        oCategorySelect.setSelectedKey("Alle");
+                                        oStockSelect.setSelectedKey("all");
+                                        doFilter();
+                                    } })
+                                ]
+                            })
+                        ]
+                    }),
+                    content: oTable
+                });
+                oDynamicPage.setModel(oModel);
+
+                // ── Shell ──
+                new Shell({
+                    app: new App({ pages: [new Page({ showHeader: false, content: [oDynamicPage] }) ] })
+                }).placeAt("content");
+            });
+        }
+    </script>
+</head>
+<body class="sapUiBody" id="content">
+</body>
+</html>
