@@ -4,22 +4,288 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Analytics Dashboard</title>
+    <style>
+        .dashboardPage { background-color: #f5f6f7; }
+        .chartCard { margin: 0.5rem; }
+    </style>
     <script
         id="sap-ui-bootstrap"
         src="https://ui5.sap.com/resources/sap-ui-core.js"
         data-sap-ui-theme="sap_horizon"
-        data-sap-ui-libs="sap.m, sap.ui.layout, sap.viz, sap.ui.table, sap.f, sap.ui.core"
-        data-sap-ui-resourceroots='{ "analytics": "./" }'
+        data-sap-ui-libs="sap.m, sap.ui.layout, sap.viz, sap.f, sap.ui.core"
         data-sap-ui-compatVersion="edge"
         data-sap-ui-async="true"
-        data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+        data-sap-ui-oninit="onUI5Ready"
+        data-sap-ui-xx-waitForTheme="true">
+    </script>
+    <script>
+        // ── Mock Data (embedded, no external files needed) ──
+        var ANALYTICS_DATA = {
+            kpis: {
+                totalRevenue: 4875000,
+                totalOrders: 12450,
+                avgOrderValue: 391.57,
+                customerSatisfaction: 4.3,
+                revenueChange: 12.5,
+                ordersChange: 8.3,
+                avgOrderChange: 3.9,
+                satisfactionChange: 0.2
+            },
+            revenueByRegion: [
+                { region: "Europa", revenue: 1650000, orders: 4200 },
+                { region: "Nordamerika", revenue: 1380000, orders: 3500 },
+                { region: "Asien-Pazifik", revenue: 980000, orders: 2800 },
+                { region: "Lateinamerika", revenue: 520000, orders: 1200 },
+                { region: "Naher Osten", revenue: 345000, orders: 750 }
+            ],
+            monthlyTrend: [
+                { month: "Jan", revenue: 320000, profit: 96000, orders: 850 },
+                { month: "Feb", revenue: 350000, profit: 108500, orders: 920 },
+                { month: "Mär", revenue: 380000, profit: 117800, orders: 980 },
+                { month: "Apr", revenue: 410000, profit: 131200, orders: 1050 },
+                { month: "Mai", revenue: 395000, profit: 122450, orders: 1010 },
+                { month: "Jun", revenue: 430000, profit: 137600, orders: 1100 },
+                { month: "Jul", revenue: 445000, profit: 146850, orders: 1120 },
+                { month: "Aug", revenue: 420000, profit: 134400, orders: 1080 },
+                { month: "Sep", revenue: 460000, profit: 151800, orders: 1180 },
+                { month: "Okt", revenue: 480000, profit: 158400, orders: 1200 },
+                { month: "Nov", revenue: 510000, profit: 173400, orders: 1350 },
+                { month: "Dez", revenue: 475000, profit: 156750, orders: 1610 }
+            ],
+            productCategories: [
+                { category: "Elektronik", revenue: 1560000, share: 32 },
+                { category: "Bekleidung", revenue: 975000, share: 20 },
+                { category: "Möbel", revenue: 731250, share: 15 },
+                { category: "Lebensmittel", revenue: 682500, share: 14 },
+                { category: "Sport & Freizeit", revenue: 487500, share: 10 },
+                { category: "Sonstiges", revenue: 438750, share: 9 }
+            ],
+            salesDetails: [
+                { orderId: "ORD-2025-001", date: "2025-01-15", customer: "TechCorp GmbH", region: "Europa", category: "Elektronik", product: "Server-Rack X500", quantity: 5, unitPrice: 12000, totalAmount: 60000, status: "Geliefert" },
+                { orderId: "ORD-2025-002", date: "2025-01-18", customer: "Fashion House Inc.", region: "Nordamerika", category: "Bekleidung", product: "Designer Kollektion", quantity: 200, unitPrice: 85, totalAmount: 17000, status: "Geliefert" },
+                { orderId: "ORD-2025-003", date: "2025-02-02", customer: "Office Solutions AG", region: "Europa", category: "Möbel", product: "Ergonomie-Paket Pro", quantity: 50, unitPrice: 450, totalAmount: 22500, status: "Geliefert" },
+                { orderId: "ORD-2025-004", date: "2025-02-14", customer: "SportMax Ltd.", region: "Asien-Pazifik", category: "Sport & Freizeit", product: "Fitness-Set Premium", quantity: 120, unitPrice: 199, totalAmount: 23880, status: "In Bearbeitung" },
+                { orderId: "ORD-2025-005", date: "2025-03-01", customer: "Green Foods S.A.", region: "Lateinamerika", category: "Lebensmittel", product: "Bio-Sortiment Palette", quantity: 30, unitPrice: 580, totalAmount: 17400, status: "Geliefert" },
+                { orderId: "ORD-2025-006", date: "2025-03-10", customer: "DataSystems Corp.", region: "Nordamerika", category: "Elektronik", product: "Cloud-Server Package", quantity: 3, unitPrice: 25000, totalAmount: 75000, status: "Geliefert" },
+                { orderId: "ORD-2025-007", date: "2025-03-22", customer: "Al Rashid Trading", region: "Naher Osten", category: "Elektronik", product: "Netzwerk-Bundle", quantity: 10, unitPrice: 3200, totalAmount: 32000, status: "Versandt" },
+                { orderId: "ORD-2025-008", date: "2025-04-05", customer: "Home & Living KG", region: "Europa", category: "Möbel", product: "Wohnzimmer-Set Classic", quantity: 15, unitPrice: 1800, totalAmount: 27000, status: "Geliefert" },
+                { orderId: "ORD-2025-009", date: "2025-04-18", customer: "Tokyo Electronics", region: "Asien-Pazifik", category: "Elektronik", product: "Display-Wand 4K", quantity: 8, unitPrice: 5500, totalAmount: 44000, status: "In Bearbeitung" },
+                { orderId: "ORD-2025-010", date: "2025-05-02", customer: "Mode Zentrale AG", region: "Europa", category: "Bekleidung", product: "Sommer-Kollektion 2025", quantity: 500, unitPrice: 42, totalAmount: 21000, status: "Versandt" },
+                { orderId: "ORD-2025-011", date: "2025-05-15", customer: "FitLife Inc.", region: "Nordamerika", category: "Sport & Freizeit", product: "Yoga-Studio Ausstattung", quantity: 25, unitPrice: 890, totalAmount: 22250, status: "Geliefert" },
+                { orderId: "ORD-2025-012", date: "2025-06-01", customer: "Gourmet Express", region: "Europa", category: "Lebensmittel", product: "Premium Feinkost Box", quantity: 100, unitPrice: 125, totalAmount: 12500, status: "Geliefert" }
+            ]
+        };
+
+        // ── App Bootstrap ──
+        function onUI5Ready() {
+            sap.ui.require([
+                "sap/ui/model/json/JSONModel",
+                "sap/ui/core/mvc/XMLView",
+                "sap/viz/ui5/format/ChartFormatter",
+                "sap/viz/ui5/api/env/Format",
+                "sap/ui/model/Filter",
+                "sap/ui/model/FilterOperator"
+            ], function (JSONModel, XMLView, ChartFormatter, Format, Filter, FilterOperator) {
+
+                // Set global model
+                var oModel = new JSONModel(ANALYTICS_DATA);
+                var oFormatPattern = ChartFormatter.DefaultPattern;
+                Format.numericFormatter(ChartFormatter.getInstance());
+
+                // Formatter functions
+                var oFormatter = {
+                    currency: function (v) {
+                        return v == null ? "" : parseFloat(v).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    },
+                    number: function (v) {
+                        return v == null ? "" : parseInt(v, 10).toLocaleString("de-DE");
+                    },
+                    date: function (v) {
+                        if (!v) return "";
+                        return new Date(v).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
+                    },
+                    statusState: function (s) {
+                        return s === "Geliefert" ? "Success" : s === "Versandt" ? "Warning" : s === "In Bearbeitung" ? "Information" : "None";
+                    }
+                };
+
+                // ── XML View (inline, no external file needed) ──
+                var sViewXml = '\
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.f" xmlns:card="sap.f.cards"\
+ xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"\
+ xmlns:viz="sap.viz.ui5.controls" xmlns:vizData="sap.viz.ui5.data"\
+ xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds">\
+  <Shell>\
+    <App>\
+      <Page title="Sales Analytics Dashboard" class="dashboardPage sapUiContentPadding" showNavButton="false">\
+        <l:Grid defaultSpan="XL3 L3 M6 S12" class="sapUiSmallMarginTop">\
+          <f:Card class="chartCard"><f:header>\
+            <card:Header title="Gesamtumsatz" subtitle="Jahresumsatz 2025" number="{path:\'/kpis/totalRevenue\', formatter:\'.fmt.currency\'}" numberUnit="EUR">\
+              <card:numericIndicators><card:NumericIndicator number="{/kpis/revenueChange}" numberUnit="%" state="Good" trend="Up"/></card:numericIndicators>\
+            </card:Header></f:header>\
+          </f:Card>\
+          <f:Card class="chartCard"><f:header>\
+            <card:Header title="Bestellungen" subtitle="Gesamtanzahl 2025" number="{path:\'/kpis/totalOrders\', formatter:\'.fmt.number\'}" numberUnit="Stk.">\
+              <card:numericIndicators><card:NumericIndicator number="{/kpis/ordersChange}" numberUnit="%" state="Good" trend="Up"/></card:numericIndicators>\
+            </card:Header></f:header>\
+          </f:Card>\
+          <f:Card class="chartCard"><f:header>\
+            <card:Header title="Ø Bestellwert" subtitle="Durchschnitt pro Bestellung" number="{path:\'/kpis/avgOrderValue\', formatter:\'.fmt.currency\'}" numberUnit="EUR">\
+              <card:numericIndicators><card:NumericIndicator number="{/kpis/avgOrderChange}" numberUnit="%" state="Good" trend="Up"/></card:numericIndicators>\
+            </card:Header></f:header>\
+          </f:Card>\
+          <f:Card class="chartCard"><f:header>\
+            <card:Header title="Kundenzufriedenheit" subtitle="Bewertung (von 5.0)" number="{/kpis/customerSatisfaction}" numberUnit="/ 5.0">\
+              <card:numericIndicators><card:NumericIndicator number="{/kpis/satisfactionChange}" numberUnit="Pkt." state="Good" trend="Up"/></card:numericIndicators>\
+            </card:Header></f:header>\
+          </f:Card>\
+        </l:Grid>\
+        <l:Grid defaultSpan="XL12 L12 M12 S12" class="sapUiSmallMarginTop">\
+          <f:Card class="chartCard"><f:header><card:Header title="Monatlicher Umsatz- und Gewinntrend"/></f:header><f:content>\
+            <viz:VizFrame id="idTrendChart" vizType="dual_line" width="100%" height="350px" uiConfig="{applicationSet:\'fiori\'}">\
+              <viz:dataset><vizData:FlattenedDataset data="{/monthlyTrend}">\
+                <vizData:dimensions><vizData:DimensionDefinition name="Monat" value="{month}"/></vizData:dimensions>\
+                <vizData:measures>\
+                  <vizData:MeasureDefinition name="Umsatz" value="{revenue}"/>\
+                  <vizData:MeasureDefinition name="Gewinn" value="{profit}"/>\
+                </vizData:measures>\
+              </vizData:FlattenedDataset></viz:dataset>\
+              <viz:feeds>\
+                <vizFeeds:FeedItem uid="valueAxis" type="Measure" values="Umsatz"/>\
+                <vizFeeds:FeedItem uid="valueAxis2" type="Measure" values="Gewinn"/>\
+                <vizFeeds:FeedItem uid="categoryAxis" type="Dimension" values="Monat"/>\
+              </viz:feeds>\
+            </viz:VizFrame>\
+          </f:content></f:Card>\
+        </l:Grid>\
+        <l:Grid defaultSpan="XL6 L6 M12 S12" class="sapUiSmallMarginTop">\
+          <f:Card class="chartCard"><f:header><card:Header title="Umsatz nach Region"/></f:header><f:content>\
+            <viz:VizFrame id="idRegionChart" vizType="bar" width="100%" height="300px" uiConfig="{applicationSet:\'fiori\'}">\
+              <viz:dataset><vizData:FlattenedDataset data="{/revenueByRegion}">\
+                <vizData:dimensions><vizData:DimensionDefinition name="Region" value="{region}"/></vizData:dimensions>\
+                <vizData:measures><vizData:MeasureDefinition name="Umsatz" value="{revenue}"/></vizData:measures>\
+              </vizData:FlattenedDataset></viz:dataset>\
+              <viz:feeds>\
+                <vizFeeds:FeedItem uid="valueAxis" type="Measure" values="Umsatz"/>\
+                <vizFeeds:FeedItem uid="categoryAxis" type="Dimension" values="Region"/>\
+              </viz:feeds>\
+            </viz:VizFrame>\
+          </f:content></f:Card>\
+          <f:Card class="chartCard"><f:header><card:Header title="Umsatz nach Produktkategorie"/></f:header><f:content>\
+            <viz:VizFrame id="idCategoryChart" vizType="donut" width="100%" height="300px" uiConfig="{applicationSet:\'fiori\'}">\
+              <viz:dataset><vizData:FlattenedDataset data="{/productCategories}">\
+                <vizData:dimensions><vizData:DimensionDefinition name="Kategorie" value="{category}"/></vizData:dimensions>\
+                <vizData:measures><vizData:MeasureDefinition name="Umsatz" value="{revenue}"/></vizData:measures>\
+              </vizData:FlattenedDataset></viz:dataset>\
+              <viz:feeds>\
+                <vizFeeds:FeedItem uid="size" type="Measure" values="Umsatz"/>\
+                <vizFeeds:FeedItem uid="color" type="Dimension" values="Kategorie"/>\
+              </viz:feeds>\
+            </viz:VizFrame>\
+          </f:content></f:Card>\
+        </l:Grid>\
+        <f:Card class="sapUiSmallMarginTop chartCard"><f:header>\
+          <card:Header title="Bestelldetails" subtitle="12 Einträge"/>\
+        </f:header><f:content>\
+          <Table id="idSalesTable" items="{/salesDetails}" growing="true" growingThreshold="10" alternateRowColors="true" sticky="ColumnHeaders">\
+            <headerToolbar><OverflowToolbar><ToolbarSpacer/>\
+              <SearchField width="300px" placeholder="Suche..." search=".onSearch"/>\
+            </OverflowToolbar></headerToolbar>\
+            <columns>\
+              <Column width="8rem"><Text text="Bestell-Nr."/></Column>\
+              <Column width="7rem"><Text text="Datum"/></Column>\
+              <Column minScreenWidth="Tablet"><Text text="Kunde"/></Column>\
+              <Column minScreenWidth="Tablet" width="8rem"><Text text="Region"/></Column>\
+              <Column minScreenWidth="Desktop" width="8rem"><Text text="Kategorie"/></Column>\
+              <Column minScreenWidth="Desktop"><Text text="Produkt"/></Column>\
+              <Column width="5rem" hAlign="End" minScreenWidth="Desktop"><Text text="Menge"/></Column>\
+              <Column width="7rem" hAlign="End" minScreenWidth="Tablet"><Text text="Stückpreis"/></Column>\
+              <Column width="8rem" hAlign="End"><Text text="Gesamtbetrag"/></Column>\
+              <Column width="8rem" hAlign="Center"><Text text="Status"/></Column>\
+            </columns>\
+            <items><ColumnListItem>\
+              <Text text="{orderId}"/>\
+              <Text text="{path:\'date\', formatter:\'.fmt.date\'}"/>\
+              <Text text="{customer}"/>\
+              <Text text="{region}"/>\
+              <Text text="{category}"/>\
+              <Text text="{product}"/>\
+              <ObjectNumber number="{quantity}"/>\
+              <ObjectNumber number="{path:\'unitPrice\', formatter:\'.fmt.currency\'}" unit="EUR"/>\
+              <ObjectNumber number="{path:\'totalAmount\', formatter:\'.fmt.currency\'}" unit="EUR" emphasized="true"/>\
+              <ObjectStatus text="{status}" state="{path:\'status\', formatter:\'.fmt.statusState\'}"/>\
+            </ColumnListItem></items>\
+          </Table>\
+        </f:content></f:Card>\
+      </Page>\
+    </App>\
+  </Shell>\
+</mvc:View>';
+
+                // Create view with inline XML
+                XMLView.create({
+                    definition: sViewXml
+                }).then(function (oView) {
+                    // Attach formatters to the view controller scope
+                    oView.getController().fmt = oFormatter;
+                    oView.getController().onSearch = function (oEvent) {
+                        var sQuery = oEvent.getParameter("query") || oEvent.getParameter("newValue") || "";
+                        var aFilters = [];
+                        if (sQuery) {
+                            aFilters.push(new Filter({
+                                filters: [
+                                    new Filter("orderId", FilterOperator.Contains, sQuery),
+                                    new Filter("customer", FilterOperator.Contains, sQuery),
+                                    new Filter("product", FilterOperator.Contains, sQuery),
+                                    new Filter("region", FilterOperator.Contains, sQuery),
+                                    new Filter("category", FilterOperator.Contains, sQuery)
+                                ],
+                                and: false
+                            }));
+                        }
+                        oView.byId("idSalesTable").getBinding("items").filter(aFilters);
+                    };
+
+                    oView.setModel(oModel);
+                    oView.placeAt("content");
+
+                    // Configure charts after rendering
+                    oView.attachAfterRendering(function () {
+                        var oTrend = oView.byId("idTrendChart");
+                        if (oTrend) {
+                            oTrend.setVizProperties({
+                                plotArea: { colorPalette: ["#0a6ed1", "#107e3e"], dataLabel: { visible: false } },
+                                valueAxis: { title: { text: "Umsatz (EUR)" }, label: { formatString: oFormatPattern.SHORTFLOAT } },
+                                valueAxis2: { title: { text: "Gewinn (EUR)" }, label: { formatString: oFormatPattern.SHORTFLOAT } },
+                                categoryAxis: { title: { visible: false } },
+                                legend: { visible: true },
+                                title: { visible: false }
+                            });
+                        }
+                        var oRegion = oView.byId("idRegionChart");
+                        if (oRegion) {
+                            oRegion.setVizProperties({
+                                plotArea: { colorPalette: ["#0a6ed1"], dataLabel: { visible: true, formatString: oFormatPattern.SHORTFLOAT } },
+                                valueAxis: { title: { visible: false }, label: { formatString: oFormatPattern.SHORTFLOAT } },
+                                categoryAxis: { title: { visible: false } },
+                                legend: { visible: false },
+                                title: { visible: false }
+                            });
+                        }
+                        var oCategory = oView.byId("idCategoryChart");
+                        if (oCategory) {
+                            oCategory.setVizProperties({
+                                plotArea: { colorPalette: ["#0a6ed1", "#1a9898", "#107e3e", "#e9730c", "#bb0000", "#7800a4"], dataLabel: { visible: true, type: "percentage" } },
+                                legend: { visible: true, position: "right" },
+                                title: { visible: false }
+                            });
+                        }
+                    });
+                });
+            });
+        }
     </script>
 </head>
 <body class="sapUiBody" id="content">
-    <div data-sap-ui-component
-         data-name="analytics"
-         data-id="container"
-         data-settings='{ "id": "analytics" }'>
-    </div>
 </body>
 </html>
